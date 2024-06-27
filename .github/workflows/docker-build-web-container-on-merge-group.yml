@@ -1,4 +1,4 @@
-name: Build and Push Web Image on Merge Group
+name: Build Web Image on Merge Group
 
 on:
   pull_request:
@@ -46,7 +46,7 @@ jobs:
 #           username: ${{ secrets.DOCKER_USERNAME }}
 #           password: ${{ secrets.DOCKER_TOKEN }}
     
-      - name: Build and push by digest
+      - name: Build by digest
         id: build
         uses: docker/build-push-action@v5
         with:
@@ -60,32 +60,32 @@ jobs:
           no-cache: true
           labels: ${{ steps.meta.outputs.labels }}
       
-      - name: Export digest
-        run: |
-          mkdir -p /tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"          
-      
-      - name: Upload digest
-        uses: actions/upload-artifact@v4
-        with:
-          name: digests-${{ env.PLATFORM_PAIR }}
-          path: /tmp/digests/*
-          if-no-files-found: error
-          retention-days: 1
+#       - name: Export digest
+#         run: |
+#           mkdir -p /tmp/digests
+#           digest="${{ steps.build.outputs.digest }}"
+#           touch "/tmp/digests/${digest#sha256:}"          
+#       
+#       - name: Upload digest
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: digests-${{ env.PLATFORM_PAIR }}
+#           path: /tmp/digests/*
+#           if-no-files-found: error
+#           retention-days: 1
 
-  merge:
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    steps:
-      - name: Download digests
-        uses: actions/download-artifact@v4
-        with:
-          path: /tmp/digests
-          pattern: digests-*
-          merge-multiple: true
-      
+#   merge:
+#     runs-on: ubuntu-latest
+#     needs:
+#       - build
+#     steps:
+#       - name: Download digests
+#         uses: actions/download-artifact@v4
+#         with:
+#           path: /tmp/digests
+#           pattern: digests-*
+#           merge-multiple: true
+#       
 #       - name: Set up Docker Buildx
 #         uses: docker/setup-buildx-action@v3
 #       
