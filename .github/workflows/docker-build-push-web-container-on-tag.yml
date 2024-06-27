@@ -10,8 +10,6 @@ env:
 
 jobs:
   build:
-    runs-on: 
-      group: ${{ matrix.platform == 'linux/amd64' && 'amd64-image-builders' || 'arm64-image-builders' }}
     strategy:
       fail-fast: false
       matrix:
@@ -40,11 +38,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
+#       - name: Login to Docker Hub
+#         uses: docker/login-action@v3
+#         with:
+#           username: ${{ secrets.DOCKER_USERNAME }}
+#           password: ${{ secrets.DOCKER_TOKEN }}
     
       - name: Build and push by digest
         id: build
@@ -53,7 +51,7 @@ jobs:
           context: ./web
           file: ./web/Dockerfile
           platforms: ${{ matrix.platform }}
-          push: true
+          push: false
           build-args: |
             DANSWER_VERSION=${{ github.ref_name }}
           # needed due to weird interactions with the builds for different platforms  
