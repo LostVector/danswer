@@ -34,7 +34,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: |
-            type=raw,value=${{ env.REGISTRY_IMAGE }}:${{ github.ref_name }}
             type=raw,value=${{ env.REGISTRY_IMAGE }}:latest
       
       - name: Set up Docker Buildx
@@ -55,7 +54,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: false
           build-args: |
-            DANSWER_VERSION=${{ github.ref_name }}
+            DANSWER_VERSION=v0.0.1
           # needed due to weird interactions with the builds for different platforms  
           no-cache: true
           labels: ${{ steps.meta.outputs.labels }}
